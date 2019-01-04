@@ -1,4 +1,5 @@
 # Try it out
+
 * Start grpc server `sbt server/run`
 * Run automation test against the running server `sbt automation/test` 
 
