@@ -23,6 +23,7 @@ class CcmGrpcImp[F[_]: Sync: Logger](pricing: GcpPricing[F]) extends CcmFs2Grpc[
     BuildInfo.scalaVersion,
     BuildInfo.sbtVersion, 
     BuildInfo.gitHeadCommit.getOrElse("No commit yet"),
-    BuildInfo.buildTime
+    BuildInfo.buildTime,
+    BuildInfo.toString
   ))
 }
