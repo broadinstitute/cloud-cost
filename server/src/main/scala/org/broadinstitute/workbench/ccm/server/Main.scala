@@ -1,4 +1,5 @@
 package org.broadinstitute.workbench.ccm
+package server
 
 import cats.effect._
 import cats.implicits._
@@ -21,9 +22,9 @@ object Main extends IOApp {
       _ <- Stream.eval(logger.info("Starting Cloud Cost Management Grpc server"))
       httpClient <- BlazeClientBuilder[IO](global).stream
       pricing = new GcpPricing[IO](httpClient, appConfig.pricingGoogleUrl)
-      workflowCostService: ServerServiceDefinition = CcmFs2Grpc.bindService(new CcmGrpcImp[IO](pricing))
+      ccmService: ServerServiceDefinition = CcmFs2Grpc.bindService(new CcmGrpcImp[IO](pricing))
       _ <- ServerBuilder.forPort(9999)
-        .addService(workflowCostService)
+        .addService(ccmService)
         .addService(ProtoReflectionService.newInstance())
         .stream[IO]
         .evalMap(server => IO(server.start()))
