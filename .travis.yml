@@ -44,7 +44,7 @@ install:
 #- google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${GOOGLE_PROJECT}-ccm-ci.json
 - sbt server/docker:publish
 - ./deploy.sh
-- export SBT_OPTS="-Dhost=130.211.211.97  -Dgrpc.port=80"
+- export SBT_OPTS="-Dhost=130.211.211.97  -Dgrpc.automation.port=80"
 script:
 - export COVERALLS_REPO_TOKEN=$coverall_token
 - sbt clean coverage test coverageReport && sbt coverageAggregate
