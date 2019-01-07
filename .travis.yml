@@ -19,16 +19,17 @@ before_install:
 - if [ ! -d ${HOME}/google-cloud-sdk ]; then curl https://sdk.cloud.google.com | bash;
   fi
 - gcloud version
+- gcloud --quiet components update
+- gcloud --quiet components update kubectl
 - tar -xzf ccm-ci-cloud-build-credentials.tar.gz
 - mkdir -p ${HOME}/.docker
 - less ${GOOGLE_PROJECT}-ccm-ci.json|grep client_email
 - sudo ls /var/lib/docker/image
 - gcloud auth activate-service-account --key-file ${GOOGLE_PROJECT}-ccm-ci.json
-- gcloud alpha auth configure-docker --quiet
+- gcloud alpha auth configure-docker --quiet # add credHelper section to docker
+- cat workbench-firestore-ccm-ci.json | docker login -u _json_key --password-stdin https://us.gcr.io
 #- gcloud config set account ccm-ci@${GOOGLE_PROJECT}.iam.gserviceaccount.com -q
 #- gcloud auth login -q
-#- gcloud --quiet components update
-#- gcloud --quiet components update kubectl
 install:
 - gcloud config set project ${GOOGLE_PROJECT}
 - gcloud config set container/cluster $CLUSTER_NAME_PRD --quiet
