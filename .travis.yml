@@ -17,30 +17,26 @@ env:
 before_install:
 - openssl aes-256-cbc -K $encrypted_730b0c0ede05_key -iv $encrypted_730b0c0ede05_iv -in ccm-ci-cloud-build-credentials.tar.gz.enc -out ccm-ci-cloud-build-credentials.tar.gz -d
 - rm -rf $HOME/google-cloud-sdk/
-#- curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-228.0.0-linux-x86_64.tar.gz
 - if [ ! -d ${HOME}/google-cloud-sdk ]; then curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-228.0.0-linux-x86_64.tar.gz | bash; fi
 - tar zxvf google-cloud-sdk-228.0.0-linux-x86_64.tar.gz && ./google-cloud-sdk/install.sh --usage-reporting=false --path-update=true
 - export PATH=$PATH:google-cloud-sdk/bin
+- gcloud info --format='value(installation.sdk_root)'
+- gcloud info --format='value(config.paths.global_config_dir)'
 - google-cloud-sdk/bin/gcloud version
 - google-cloud-sdk/bin/gcloud --quiet components update
 - google-cloud-sdk/bin/gcloud --quiet components update kubectl
 - tar -xzf ccm-ci-cloud-build-credentials.tar.gz
 - mkdir -p ${HOME}/.docker
-- less ${GOOGLE_PROJECT}-ccm-ci.json|grep client_email
-- sudo ls /var/lib/docker/image
 # Begin Authentication against google for publishing docker image
 - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${GOOGLE_PROJECT}-ccm-ci.json
 - google-cloud-sdk/bin/gcloud auth configure-docker --quiet # add credHelper section to docker
 - cat workbench-firestore-ccm-ci.json | docker login -u _json_key --password-stdin https://us.gcr.io
 # End Authentication
-#- google-cloud-sdk/bin/gcloud config set account ccm-ci@${GOOGLE_PROJECT}.iam.gserviceaccount.com -q
-#- google-cloud-sdk/bin/gcloud auth login -q
 install:
 - google-cloud-sdk/bin/gcloud config set project ${GOOGLE_PROJECT}
 - google-cloud-sdk/bin/gcloud config set container/cluster $CLUSTER_NAME_PRD --quiet
 - google-cloud-sdk/bin/gcloud config set compute/zone us-central1-a
 #- google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${GOOGLE_PROJECT}-ccm-ci.json
-- google-cloud-sdk/bin/gcloud auth list -q
 - sbt server/docker:publish
 - ./deploy.sh
 - export SBT_OPTS="-Dhost=130.211.211.97  -Dgrpc.port=80"
