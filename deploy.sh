@@ -7,4 +7,8 @@ java -jar ~/.ivy2/cache/com.github.os72/protoc-jar/jars/protoc-jar-3.6.0.jar -I=
 # deploy cloud enpoint
 google-cloud-sdk/bin/gcloud endpoints services deploy ./protobuf/target/ccm.pb ./kubernetes/api_config.yaml
 # creating kubernetes cluster
+kubectl version
+google-cloud-sdk/bin/kubectl version
+kubectl config view
+google-cloud-sdk/bin/kubectl config view
 google-cloud-sdk/bin/kubectl create -f ./kubernetes/kub_service_deploy.yaml
