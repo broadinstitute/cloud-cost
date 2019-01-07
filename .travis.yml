@@ -25,6 +25,8 @@ install:
   - gcloud config set compute/zone us-central1-a
   - gcloud auth configure-docker # authenticate to google container registry
   - sbt server/docker:publish
+  - deploy.sh
+  - export SBT_OPTS="-Dhost=130.211.211.97  -Dgrpc.port=80"
 script:
 - export COVERALLS_REPO_TOKEN=$coverall_token
 - sbt clean coverage test coverageReport && sbt coverageAggregate

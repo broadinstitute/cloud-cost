@@ -5,9 +5,9 @@ import cats.effect.IO
 import fs2.Stream
 import io.grpc.Metadata
 import minitest.laws.Checkers
-import org.broadinstitute.workbench.protos.ccm._
+import org.broadinstitute.workbench.ccm.protos.ccm._
 import org.lyranthe.fs2_grpc.java_runtime.implicits._
-import Generators._
+import server.Generators._
 
 object WorkflowCostTest extends CcmTestSuite with Checkers {
   val defaultMetaData = new Metadata()

@@ -7,7 +7,7 @@ import io.chrisdavenport.log4cats.Logger
 import io.grpc.Metadata
 import org.broadinstitute.workbench.ccm.pricing.JsonCodec._
 import org.broadinstitute.workbench.ccm.pricing.{ComputeCost, GcpPricing}
-import org.broadinstitute.workbench.protos.ccm._
+import org.broadinstitute.workbench.ccm.protos.ccm._
 
 class CcmGrpcImp[F[_]: Sync: Logger](pricing: GcpPricing[F]) extends CcmFs2Grpc[F] {
   override def getWorkflowCost(request: WorkflowCostRequest, clientHeaders: Metadata): F[WorkflowCostResponse] = {

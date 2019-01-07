@@ -3,7 +3,7 @@ package server
 
 import cats.effect._
 import cats.implicits._
-import org.broadinstitute.workbench.protos.ccm._
+import org.broadinstitute.workbench.ccm.protos.ccm._
 import io.grpc._
 import org.lyranthe.fs2_grpc.java_runtime.implicits._
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
