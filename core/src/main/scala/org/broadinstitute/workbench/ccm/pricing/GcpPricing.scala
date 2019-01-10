@@ -4,6 +4,7 @@ package pricing
 import cats.effect.Sync
 import io.circe.Json
 import org.broadinstitute.workbench.ccm.pricing.JsonCodec._
+import org.broadinstitute.workbench.ccm.pricing.PricingList.GcpPriceList
 import org.http4s.Uri
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.client.Client
@@ -14,7 +15,6 @@ class GcpPricing[F[_]: Sync](httpClient: Client[F], uri: Uri) {
   }
 }
 
-final case class GcpPriceList(asJson: Json) extends AnyVal
 
 //CUSTOM_MACHINE_CPU = "CP-DB-PG-CUSTOM-VM-CORE"
 //CUSTOM_MACHINE_RAM = "CP-DB-PG-CUSTOM-VM-RAM"

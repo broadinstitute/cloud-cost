@@ -6,6 +6,7 @@ object Dependencies {
   val http4sVersion = "0.20.0-M4"
   val grpcNettyVersion = "1.15.1"
   val cirisVersion = "0.12.1"
+  val scalaCacheVersion = "0.27.0"
 
   val common = List(
     "io.grpc" % "grpc-netty" % grpcNettyVersion,
@@ -17,7 +18,10 @@ object Dependencies {
     "org.http4s" %% "http4s-circe" % http4sVersion,
     "org.http4s" %% "http4s-blaze-client" % http4sVersion,
     "com.github.pureconfig" %% "pureconfig" % "0.10.1",
-    "io.sentry" % "sentry-logback" % "1.7.16" // see doc https://docs.sentry.io/clients/java/modules/logback/
+    "io.sentry" % "sentry-logback" % "1.7.16", // see doc https://docs.sentry.io/clients/java/modules/logback/
+    "com.github.cb372" %% "scalacache-memcached" % scalaCacheVersion,
+    "com.github.cb372" %% "scalacache-cats-effect" % scalaCacheVersion,
+    "com.github.cb372" %% "scalacache-circe" % scalaCacheVersion
   )
 
   val automation = common ++ List(

@@ -19,7 +19,7 @@ object WorkflowCostTest extends CcmTestSuite with Checkers {
 //  TODO: put this in a different file
   test("status should return build info"){
     val res = for {
-      managedChannel <- Stream.resource(TestDependencies.managedChannelResource)
+      managedChannel <- Stream.resource(TestResources.managedChannelResource)
       ccmStub = CcmFs2Grpc.stub[IO](managedChannel)
       response <- Stream.eval(ccmStub.status(StatusRequest(), defaultMetaData))
     } yield {
@@ -33,7 +33,7 @@ object WorkflowCostTest extends CcmTestSuite with Checkers {
     check1{
       (workflowCostRequest: WorkflowCostRequest) =>
         val res = for {
-          managedChannel <- Stream.resource(TestDependencies.managedChannelResource)
+          managedChannel <- Stream.resource(TestResources.managedChannelResource)
           workflowStub = CcmFs2Grpc.stub[IO](managedChannel)
           response <- Stream.eval(workflowStub.getWorkflowCost(workflowCostRequest, defaultMetaData))
         } yield {

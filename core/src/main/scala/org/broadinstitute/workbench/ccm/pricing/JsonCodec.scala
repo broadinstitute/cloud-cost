@@ -2,6 +2,7 @@ package org.broadinstitute.workbench.ccm
 package pricing
 
 import io.circe.Decoder
+import org.broadinstitute.workbench.ccm.pricing.PricingList.GcpPriceList
 
 //TODO: this needs to be updated to use https://cloud.google.com/billing/v1/how-tos/catalog-api
 object JsonCodec {
