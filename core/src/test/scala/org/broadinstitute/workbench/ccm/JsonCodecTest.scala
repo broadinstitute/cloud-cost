@@ -1,6 +1,5 @@
 package org.broadinstitute.workbench.ccm
 
-import minitest.SimpleTestSuite
 import io.circe.parser._
 import JsonCodec._
 

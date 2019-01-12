@@ -27,6 +27,13 @@ curl -k https://localhost/status
 {"scalaVersion":"2.12.7","sbtVersion":"1.2.8","gitCommit":"350b74fc073550b1262609f918583eae10774ecc","buildTime":"2019-01-05T11:33:00.564"}%
 ```
 
+# Connecting to Cloud SQL locally
+https://codelabs.developers.google.com/codelabs/cloud-postgresql-gke-memegen/#5
+
+* Download cloud_sql_proxy: `curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.amd64`
+
+* ./cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:5432 -credential_file=key.json &
+
 TODO
 * calculate formula
 * figure out how to get service URLs properly
