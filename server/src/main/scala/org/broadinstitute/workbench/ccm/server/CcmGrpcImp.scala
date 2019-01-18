@@ -1,23 +1,23 @@
 package org.broadinstitute.workbench.ccm
 package server
 
+import java.time.Instant
+
 import cats.effect.Sync
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import io.grpc.Metadata
 import org.broadinstitute.workbench.ccm.pricing.JsonCodec._
-import org.broadinstitute.workbench.ccm.pricing.{ComputeCost, GcpPricing, PriceList, Skus}
+import org.broadinstitute.workbench.ccm.pricing.GcpPricing
 import org.broadinstitute.workbench.ccm.protos.ccm._
 
 class CcmGrpcImp[F[_]: Sync: Logger](pricing: GcpPricing[F]) extends CcmFs2Grpc[F] {
   override def getWorkflowCost(request: WorkflowCostRequest, clientHeaders: Metadata): F[WorkflowCostResponse] = {
     for {
-      cromwellMetadata: MetadataResponse <-
-      gcpPriceList <- pricing.getGcpPriceList()
-      skus <- Sync[F].rethrow(Sync[F].delay[Either[Throwable, Skus]](gcpPriceList.asJson.as[Skus].leftWiden)) //move json processing to GcpPricing class and only call getPriceList?
-      priceList <- Sync[F].rethrow(Sync[F].delay[Either[Throwable, PriceList]](pricing.getPriceList(cromwellMetadata.calls.head.region, MachineType("custom"), skus)))
-      result <- Sync[F].rethrow(Sync[F].delay[Either[Throwable, Double]](CostCalculator.getPriceOfCall(cromwellMetadata, priceList)))
-      // computeCost <- Sync[F].rethrow(Sync[F].delay[Either[Throwable, ComputeCost]](priceList.asJson.as[ComputeCost].leftWiden))
+   //   cromwellMetadata: MetadataResponse <- ???
+      //priceList <- pricing.getGcpPriceList(cromwellMetadata.calls.head.region, MachineType("custom"))
+      priceList <- pricing.getGcpPriceList(Region(""), MachineType(""))
+      result <- Sync[F].rethrow(Sync[F].delay[Either[Throwable, Double]](CostCalculator.getPriceOfCall(sampleMetaData, priceList)))
     } yield {
       WorkflowCostResponse(result)
     }
@@ -30,4 +30,21 @@ class CcmGrpcImp[F[_]: Sync: Logger](pricing: GcpPricing[F]) extends CcmFs2Grpc[
     BuildInfo.buildTime,
     BuildInfo.toString
   ))
+
+
+  // ToDo: REMOVE THIS WHEN WE GET THE METADATA HOOKED UP ABOVE - I'm just passing in a sample one right now so it compiles
+  val sampleMetaData =MetadataResponse(
+    List(Call(
+      RuntimeAttributes(CpuNumber(1), Disks(DiskName("local-disk"), DiskSize(1), DiskType("HDD")), BootDiskSizeGb(10), Preemptible(3)),
+      List(),
+      false,
+      true,
+      Region("us-central1-c"),
+      Status("Success"),
+      MachineType("us-central1-c/f1-micro"),
+      BackEnd("JES"),
+      Attempt(1))),
+    Instant.now,
+    Instant.now
+  )
 }
