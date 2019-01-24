@@ -1,21 +1,52 @@
 package org.broadinstitute.workbench.ccm
 
+import java.text.SimpleDateFormat
+import java.time.Instant
+
 import minitest.SimpleTestSuite
 import io.circe.parser._
 import JsonCodec._
 
+import scala.concurrent.duration.Duration
+
 object JsonCodecTest extends CcmTestSuite {
+
   test("metadataResponseDecoder should be able to decode MetadataResponse"){
+    val formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    def toInstant(time: String): Instant = formatter.parse(time).toInstant
     val res = for {
       json <- parse(sampleTest)
       r <- json.as[MetadataResponse]
     } yield {
       val expectedResponse = MetadataResponse(
         List(Call(
-          RuntimeAttributes(CpuNumber(1), Disks(DiskName("local-disk"), DiskSize(1), DiskType("HDD")), BootDiskSizeGb(10), Preemptible(3)),
+          RuntimeAttributes(CpuNumber(1), Disks(DiskName("local-disk"), DiskSize(1), DiskType.stringToDiskType("HDD")), BootDiskSizeGb(10), PreemptibleAttemptsAllowed(3)),
+          List(ExecutionEvent(ExecutionEventDescription("delocalizing-files"),       Instant.parse("2019-01-02T22:14:05.438689657Z"), Instant.parse("2019-01-02T22:14:09.779343193Z")),
+               ExecutionEvent(ExecutionEventDescription("UpdatingJobStore"),         Instant.parse("2019-01-02T22:14:39.825Z"),       Instant.parse("2019-01-02T22:14:40.799Z")),
+               ExecutionEvent(ExecutionEventDescription("ok"),                       Instant.parse("2019-01-02T22:14:09.779343193Z"), Instant.parse("2019-01-02T22:14:10Z")),
+               ExecutionEvent(ExecutionEventDescription("waiting for quota"),        Instant.parse("2019-01-02T22:11:04Z"),           Instant.parse("2019-01-02T22:11:27Z")),
+               ExecutionEvent(ExecutionEventDescription("RequestingExecutionToken"), Instant.parse("2019-01-02T22:10:13.687Z"),       Instant.parse("2019-01-02T22:10:13.979Z")),
+               ExecutionEvent(ExecutionEventDescription("RunningJob"),               Instant.parse("2019-01-02T22:11:02.884Z"),       Instant.parse("2019-01-02T22:11:04Z")),
+               ExecutionEvent(ExecutionEventDescription("UpdatingCallCache"),        Instant.parse("2019-01-02T22:14:39.160Z"),       Instant.parse("2019-01-02T22:14:39.825Z")),
+               ExecutionEvent(ExecutionEventDescription("pulling-image"),            Instant.parse("2019-01-02T22:12:47.780575142Z"), Instant.parse("2019-01-02T22:12:52.779343466Z")),
+               ExecutionEvent(ExecutionEventDescription("cromwell poll interval"),   Instant.parse("2019-01-02T22:14:10Z"),           Instant.parse("2019-01-02T22:14:39.160Z")),
+               ExecutionEvent(ExecutionEventDescription("localizing-files"),         Instant.parse("2019-01-02T22:12:52.779343466Z"), Instant.parse("2019-01-02T22:14:04.589980901Z")),
+               ExecutionEvent(ExecutionEventDescription("Pending"),                  Instant.parse("2019-01-02T22:10:13.686Z"),       Instant.parse("2019-01-02T22:10:13.687Z")),
+               ExecutionEvent(ExecutionEventDescription("start"),                    Instant.parse("2019-01-02T22:12:46.103634373Z"), Instant.parse("2019-01-02T22:12:47.780575142Z")),
+               ExecutionEvent(ExecutionEventDescription("WaitingForValueStore"),     Instant.parse("2019-01-02T22:10:13.979Z"),       Instant.parse("2019-01-02T22:10:13.979Z")),
+               ExecutionEvent(ExecutionEventDescription("initializing VM"),          Instant.parse("2019-01-02T22:11:27Z"),           Instant.parse("2019-01-02T22:12:46.103634373Z")),
+               ExecutionEvent(ExecutionEventDescription("running-docker"),           Instant.parse("2019-01-02T22:14:04.589980901Z"), Instant.parse("2019-01-02T22:14:05.438689657Z")),
+               ExecutionEvent(ExecutionEventDescription("CheckingCallCache"),        Instant.parse("2019-01-02T22:11:02.874Z"),       Instant.parse("2019-01-02T22:11:02.884Z")),
+               ExecutionEvent(ExecutionEventDescription("PreparingJob"),             Instant.parse("2019-01-02T22:10:13.979Z"),       Instant.parse("2019-01-02T22:11:02.874Z"))),
           false,
-          true
-        ))
+          true,
+          Region.stringToRegion("us-central1-c"),
+          Status.stringToStatus("Success"),
+          MachineType.F1Micro,
+          BackEnd.stringToBackEnd("JES"),
+          Attempt(1))),
+        Instant.parse("2019-01-02T22:10:07.088Z"),
+        Instant.parse("2019-01-02T22:14:47.266Z")
       )
       assertEquals(r, expectedResponse)
     }
